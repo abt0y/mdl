@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=yes, maximum-scale=5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Maidailuu Catalog">
+    <meta name="theme-color" content="#667eea">
+    <meta name="description" content="Maidailuu Artist Catalog - View and download the complete portfolio">
+    <meta name="format-detection" content="telephone=no">
+    <title>Maidailuu - Artist Catalog</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: clamp(1.8rem, 8vw, 3rem);
+            margin-bottom: 8px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            word-break: break-word;
+        }
+
+        .header p {
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            opacity: 0.95;
+            font-weight: 300;
+            word-break: break-word;
+        }
+
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: clamp(20px, 5vw, 60px) clamp(15px, 4vw, 40px);
+        }
+
+        .description {
+            text-align: center;
+            color: #555;
+            margin-bottom: clamp(20px, 5vw, 40px);
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            line-height: 1.6;
+            word-break: break-word;
+        }
+
+        .catalog-display {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: clamp(20px, 5vw, 30px);
+            margin-bottom: clamp(20px, 5vw, 40px);
+            border: 2px solid #e9ecef;
+            min-height: clamp(350px, 60vw, 500px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pdf-icon {
+            font-size: clamp(2.5rem, 10vw, 4rem);
+            margin-bottom: clamp(15px, 4vw, 20px);
+        }
+
+        /* Reduce motion for accessibility */
+        @media (prefers-reduced-motion: no-preference) {
+            .pdf-icon {
+                animation: float 3s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0%, 100% { transform: translateY(0px); }
+                50% { transform: translateY(-8px); }
+            }
+        }
+
+        .catalog-name {
+            font-size: clamp(1.1rem, 4vw, 1.5rem);
+            color: #333;
+            margin-bottom: 8px;
+            font-weight: 600;
+            word-break: break-word;
+            text-align: center;
+            overflow-wrap: break-word;
+            hyphens: auto;
+        }
+
+        .catalog-size {
+            color: #999;
+            font-size: clamp(0.85rem, 2.5vw, 0.95rem);
+            margin-bottom: clamp(20px, 5vw, 30px);
+        }
+
+        .actions {
+            display: flex;
+            gap: clamp(10px, 3vw, 15px);
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .btn {
+            padding: clamp(12px, 3vw, 14px) clamp(20px, 4vw, 30px);
+            border: none;
+            border-radius: 8px;
+            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: clamp(8px, 2vw, 10px);
+            min-height: 48px;
+            min-width: 48px;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+            user-select: text;
+            transition: opacity 0.2s ease;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-download:active {
+            opacity: 0.85;
+            transform: scale(0.98);
+        }
+
+        .btn-download:focus {
+            outline: 2px solid #333;
+            outline-offset: 2px;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .btn-download:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            }
+        }
+
+        .btn-view {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-view:active {
+            opacity: 0.85;
+            transform: scale(0.98);
+        }
+
+        .btn-view:focus {
+            outline: 2px solid #667eea;
+            outline-offset: 2px;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .btn-view:hover {
+                background: #e9ecef;
+                border-color: #667eea;
+                color: #667eea;
+            }
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: clamp(15px, 4vw, 30px) clamp(15px, 4vw, 40px);
+            text-align: center;
+            color: #999;
+            border-top: 1px solid #e9ecef;
+            font-size: clamp(0.8rem, 2vw, 0.9rem);
+            flex-shrink: 0;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: clamp(15px, 4vw, 20px);
+            margin-top: clamp(20px, 5vw, 40px);
+        }
+
+        .info-card {
+            background: #f8f9fa;
+            padding: clamp(15px, 3vw, 20px);
+            border-radius: 10px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+            word-break: break-word;
+        }
+
+        .info-card-label {
+            color: #999;
+            font-size: clamp(0.75rem, 2vw, 0.9em);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .info-card-value {
+            color: #333;
+            font-size: clamp(1rem, 3vw, 1.2rem);
+            font-weight: 600;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: auto;
+            padding: 0;
+            width: 95vw;
+            height: 95vh;
+            max-width: 1000px;
+            max-height: 95vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: clamp(15px, 3vw, 20px);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 12px 12px 0 0;
+            flex-shrink: 0;
+            gap: 10px;
+        }
+
+        .modal-header h2 {
+            font-size: clamp(1rem, 4vw, 1.3rem);
+            flex: 1;
+            word-break: break-word;
+            min-width: 0;
+        }
+
+        .modal-close {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            width: clamp(40px, 10vw, 50px);
+            height: clamp(40px, 10vw, 50px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            flex-shrink: 0;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+            transition: opacity 0.2s ease;
+            min-width: 48px;
+            min-height: 48px;
+        }
+
+        .modal-close:active {
+            opacity: 0.75;
+        }
+
+        .modal-close:focus {
+            outline: 2px solid #fff;
+            outline-offset: -2px;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .modal-close:hover {
+                background: rgba(255, 255, 255, 0.2);
+            }
+        }
+
+        .modal-body {
+            flex: 1;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            position: relative;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        .pdf-fallback {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+        }
+
+        .pdf-fallback p {
+            margin-bottom: 20px;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+
+        .pdf-fallback-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            min-height: 48px;
+            min-width: 48px;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+        }
+
+        /* Responsive for small phones */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .container {
+                border-radius: 12px;
+                max-height: 100vh;
+            }
+
+            .header {
+                padding: 30px 15px;
+            }
+
+            .content {
+                padding: 20px 15px;
+            }
+
+            .catalog-display {
+                padding: 20px 15px;
+                min-height: 300px;
+            }
+
+            .actions {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+                min-width: unset;
+                flex: unset;
+            }
+
+            .modal-content {
+                width: 100vw;
+                height: 100vh;
+                max-width: 100%;
+                max-height: 100%;
+                border-radius: 0;
+            }
+
+            .modal-header {
+                border-radius: 0;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Responsive for tablets */
+        @media (min-width: 481px) and (max-width: 1024px) {
+            .actions {
+                gap: 12px;
+            }
+
+            .btn {
+                flex: 1;
+                min-width: 140px;
+            }
+        }
+
+        /* High DPI screens */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .btn, .modal-close {
+                border: 1px solid transparent;
+            }
+        }
+
+        /* Landscape mode adjustments */
+        @media (max-height: 600px) {
+            .container {
+                max-height: 100vh;
+            }
+
+            .content {
+                padding: 15px 20px;
+            }
+
+            .catalog-display {
+                min-height: 200px;
+                padding: 15px 20px;
+                margin-bottom: 15px;
+            }
+
+            .info-grid {
+                margin-top: 15px;
+                gap: 10px;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            .actions, .footer, .modal {
+                display: none;
+            }
+        }
+
+        /* Language Toggle Button */
+        .language-toggle {
+            position: fixed;
+            bottom: clamp(15px, 4vw, 30px);
+            right: clamp(15px, 4vw, 30px);
+            width: clamp(50px, 12vw, 60px);
+            height: clamp(50px, 12vw, 60px);
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            z-index: 999;
+            -webkit-appearance: none;
+            appearance: none;
+            touch-action: manipulation;
+            min-width: 48px;
+            min-height: 48px;
+            transition: opacity 0.2s ease;
+        }
+
+        .language-toggle:active {
+            opacity: 0.85;
+            transform: scale(0.95);
+        }
+
+        .language-toggle:focus {
+            outline: 2px solid #333;
+            outline-offset: 2px;
+        }
+
+        @media (hover: hover) and (pointer: fine) {
+            .language-toggle:hover {
+                box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+                transform: translateY(-2px);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .language-toggle {
+                bottom: 15px;
+                right: 15px;
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Maidailuu</h1>
+            <p data-lang="subtitle">Cổng Xem catalogue Nghệ Sĩ</p>
+        </div>
+
+        <div class="content">
+            <div class="description" data-lang="description">
+                Khám phá bộ sưu tập đầy đủ và danh mục của những tác phẩm nghệ thuật của Maidailuu. 
+                Xem toàn bộ danh mục hoặc tải xuống để xem ngoại tuyến.
+            </div>
+
+            <div class="catalog-display">
+                <div class="pdf-icon">📄</div>
+                <div class="catalog-name">MAIDAILUU_CATALOGUE_FINAL.pdf</div>
+                <div class="catalog-size" id="file-size" data-lang="file-size">Sẵn sàng để xem</div>
+                <div class="actions">
+                    <button class="btn btn-view" id="viewBtn" type="button" data-lang="view-btn" aria-label="Xem Danh Mục">
+                        👁️ Xem
+                    </button>
+                    <button class="btn btn-download" id="downloadBtn" type="button" data-lang="download-btn" aria-label="Tải xuống PDF">
+                        ⬇️ Tải xuống
+                    </button>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-card-label" data-lang="artist-label">Nghệ Sĩ</div>
+                    <div class="info-card-value">Maidailuu</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label" data-lang="format-label">Định Dạng</div>
+                    <div class="info-card-value">PDF</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label" data-lang="status-label">Trạng Thái</div>
+                    <div class="info-card-value" data-lang="status-value">Có Sẵn</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p data-lang="footer">© 2026 Cổng Danh Mục Maidailuu. Bảo lưu mọi quyền.</p>
+        </div>
+    </div>
+
+    <!-- PDF Viewer Modal -->
+    <div id="pdfModal" class="modal" role="dialog" data-lang="modal-title" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" data-lang="modal-header">📄 Trình Xem Danh Mục Maidailuu</h2>
+                <button class="modal-close" id="closeBtn" type="button" data-lang="close-btn" aria-label="Đóng trình xem PDF">&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="pdfFrame" title="PDF Viewer" role="document" src="" sandbox="allow-same-origin allow-scripts"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Language Toggle Button -->
+    <button class="language-toggle" id="languageToggle" type="button" data-lang="lang-btn" aria-label="Chuyển đổi ngôn ngữ" title="English">EN</button>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // Language translations
+            const translations = {
+                vi: {
+                    'subtitle': 'Cổng Xem Danh Mục Nghệ Sĩ',
+                    'description': 'Khám phá bộ sưu tập đầy đủ và danh mục của những tác phẩm nghệ thuật của Maidailuu. Xem toàn bộ danh mục hoặc tải xuống để xem ngoại tuyến.',
+                    'file-size': 'Sẵn sàng để xem',
+                    'view-btn': '👁️ Xem',
+                    'download-btn': '⬇️ Tải xuống',
+                    'artist-label': 'Nghệ Sĩ',
+                    'format-label': 'Định Dạng',
+                    'status-label': 'Trạng Thái',
+                    'status-value': 'Có Sẵn',
+                    'footer': '© 2026 Cổng Danh Mục Maidailuu. Bảo lưu mọi quyền.',
+                    'modal-header': '📄 Trình Xem Danh Mục Maidailuu',
+                    'lang-btn': 'EN',
+                    'viewBtn-label': 'Xem Danh Mục',
+                    'downloadBtn-label': 'Tải xuống PDF',
+                    'closeBtn-label': 'Đóng trình xem PDF',
+                    'langToggle-label': 'Chuyển đổi ngôn ngữ',
+                    'file-size-text': 'Kích thước tệp:'
+                },
+                en: {
+                    'subtitle': 'Artist Catalog Portal',
+                    'description': 'Explore the complete collection and portfolio of artworks by Maidailuu. View the full catalog or download it for offline access.',
+                    'file-size': 'Ready to view',
+                    'view-btn': '👁️ View',
+                    'download-btn': '⬇️ Download',
+                    'artist-label': 'Artist',
+                    'format-label': 'Format',
+                    'status-label': 'Status',
+                    'status-value': 'Available',
+                    'footer': '© 2026 Maidailuu Catalog Portal. All rights reserved.',
+                    'modal-header': '📄 Maidailuu Catalog Viewer',
+                    'lang-btn': 'VI',
+                    'viewBtn-label': 'View Catalog',
+                    'downloadBtn-label': 'Download PDF',
+                    'closeBtn-label': 'Close PDF viewer',
+                    'langToggle-label': 'Toggle language',
+                    'file-size-text': 'File size:'
+                }
+            };
+
+            const PDF_URL = 'MAIDAILUU_CATALOGUE_FINAL.pdf';
+            const modal = document.getElementById('pdfModal');
+            const pdfFrame = document.getElementById('pdfFrame');
+            const viewBtn = document.getElementById('viewBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const closeBtn = document.getElementById('closeBtn');
+            const fileSizeEl = document.getElementById('file-size');
+            const languageToggle = document.getElementById('languageToggle');
+
+            // Get saved language or default to Vietnamese
+            let currentLanguage = localStorage.getItem('language') || 'vi';
+
+            // Set initial language
+            setLanguage(currentLanguage);
+
+            // Language toggle functionality
+            languageToggle.addEventListener('click', function() {
+                currentLanguage = currentLanguage === 'vi' ? 'en' : 'vi';
+                localStorage.setItem('language', currentLanguage);
+                setLanguage(currentLanguage);
+            });
+
+            // Set language function
+            function setLanguage(lang) {
+                const trans = translations[lang];
+
+                // Update all elements with data-lang attribute
+                document.querySelectorAll('[data-lang]').forEach(function(el) {
+                    const key = el.getAttribute('data-lang');
+                    if (trans[key]) {
+                        el.textContent = trans[key];
+                    }
+                });
+
+                // Update aria-labels
+                viewBtn.setAttribute('aria-label', trans['viewBtn-label']);
+                downloadBtn.setAttribute('aria-label', trans['downloadBtn-label']);
+                closeBtn.setAttribute('aria-label', trans['closeBtn-label']);
+                languageToggle.setAttribute('aria-label', trans['langToggle-label']);
+
+                // Update language toggle button title
+                languageToggle.title = lang === 'vi' ? 'English' : 'Tiếng Việt';
+
+                // Update document language
+                document.documentElement.lang = lang;
+            }
+
+            // Get file size
+            function getFileSize() {
+                // Use XMLHttpRequest for better compatibility with older devices
+                const xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200 || xhr.status === 206) {
+                            const size = xhr.getResponseHeader('content-length');
+                            if (size) {
+                                const mb = (parseInt(size) / (1024 * 1024)).toFixed(1);
+                                if (mb > 0.1) {
+                                    const trans = translations[currentLanguage];
+                                    fileSizeEl.textContent = trans['file-size-text'] + ' ' + mb + ' MB';
+                                }
+                            }
+                        }
+                    }
+                };
+                xhr.onerror = function() {
+                    fileSizeEl.textContent = translations[currentLanguage]['file-size'];
+                };
+                xhr.open('HEAD', PDF_URL, true);
+                xhr.send();
+            }
+
+            // Open PDF viewer
+            function openViewer() {
+                try {
+                    pdfFrame.src = PDF_URL + '#toolbar=1&navpanes=0&scrollbar=1';
+                    modal.classList.add('show');
+                    modal.setAttribute('aria-hidden', 'false');
+                    closeBtn.focus();
+                    
+                    // Prevent body scroll on mobile
+                    document.body.style.overflow = 'hidden';
+                } catch (e) {
+                    console.error('Error opening PDF viewer:', e);
+                    const msg = currentLanguage === 'vi' ? 
+                        'Không thể mở trình xem PDF. Vui lòng tải xuống tệp thay thế.' : 
+                        'Unable to open PDF viewer. Please download the file instead.';
+                    alert(msg);
+                }
+            }
+
+            // Close PDF viewer
+            function closeViewer() {
+                modal.classList.remove('show');
+                modal.setAttribute('aria-hidden', 'true');
+                pdfFrame.src = '';
+                
+                // Restore body scroll
+                document.body.style.overflow = '';
+                
+                // Return focus to view button
+                viewBtn.focus();
+            }
+
+            // Download catalog
+            function downloadCatalog() {
+                try {
+                    // Try HTML5 download attribute first
+                    const link = document.createElement('a');
+                    link.href = PDF_URL;
+                    link.download = 'MAIDAILUU_CATALOGUE_FINAL.pdf';
+                    
+                    // For better mobile support
+                    if (navigator.userAgent.match(/iPad|iPhone|iPod/)) {
+                        // Open in new window for iOS
+                        window.open(PDF_URL, '_blank');
+                    } else {
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+                } catch (e) {
+                    console.error('Error downloading PDF:', e);
+                    // Fallback: open in new window
+                    window.open(PDF_URL, '_blank');
+                }
+            }
+
+            // Event listeners
+            viewBtn.addEventListener('click', openViewer);
+            downloadBtn.addEventListener('click', downloadCatalog);
+            closeBtn.addEventListener('click', closeViewer);
+
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    closeViewer();
+                }
+            });
+
+            // Close on escape key
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' || event.keyCode === 27) {
+                    closeViewer();
+                }
+            });
+
+            // Prevent modal from closing when clicking on iframe
+            pdfFrame.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+
+            // Handle orientation change
+            window.addEventListener('orientationchange', function() {
+                // Adjust modal on orientation change
+                if (modal.classList.contains('show')) {
+                    setTimeout(function() {
+                        window.scrollTo(0, 0);
+                    }, 100);
+                }
+            });
+
+            // Initialize on page load
+            document.addEventListener('DOMContentLoaded', getFileSize);
+
+            // Fallback for older browsers
+            if (!window.addEventListener) {
+                document.attachEvent('onreadystatechange', function() {
+                    if (document.readyState === 'complete') {
+                        getFileSize();
+                    }
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

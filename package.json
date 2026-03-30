@@ -1,0 +1,18 @@
+{
+  "name": "maidailuu-catalog-portal",
+  "version": "1.0.0",
+  "description": "Portal to view and download Maidailuu artist catalog",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "keywords": ["catalog", "artist", "maidailuu"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  }
+}
