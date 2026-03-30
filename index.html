@@ -88,17 +88,22 @@
             word-break: break-word;
         }
 
+        .catalog-list {
+            display: grid;
+            gap: 20px;
+            margin-bottom: clamp(20px, 5vw, 40px);
+        }
+
         .catalog-display {
             background: #f8f9fa;
             border-radius: 12px;
             padding: clamp(20px, 5vw, 30px);
-            margin-bottom: clamp(20px, 5vw, 40px);
             border: 2px solid #e9ecef;
-            min-height: clamp(350px, 60vw, 500px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
         }
 
         .pdf-icon {
@@ -249,6 +254,7 @@
             color: #333;
             font-size: clamp(1rem, 3vw, 1.2rem);
             font-weight: 600;
+            white-space: pre-line;
         }
 
         .modal {
@@ -548,21 +554,37 @@
 
         <div class="content">
             <div class="description" data-lang="description">
-                Khám phá bộ sưu tập đầy đủ và danh mục của những tác phẩm nghệ thuật của Maidailuu. 
-                Xem toàn bộ danh mục hoặc tải xuống để xem ngoại tuyến.
+                Khám phá hai catalogue triển lãm của Mai Dai Luu: DEEP THE FOREST (2022) và FANTASY GARDEN (2024).
+                Chọn một catalogue bên dưới để xem trước hoặc tải xuống trực tiếp.
             </div>
 
-            <div class="catalog-display">
-                <div class="pdf-icon">📄</div>
-                <div class="catalog-name">MAIDAILUU_CATALOGUE_FINAL.pdf</div>
-                <div class="catalog-size" id="file-size" data-lang="file-size">Sẵn sàng để xem</div>
-                <div class="actions">
-                    <button class="btn btn-view" id="viewBtn" type="button" data-lang="view-btn" aria-label="Xem Danh Mục">
-                        👁️ Xem
-                    </button>
-                    <button class="btn btn-download" id="downloadBtn" type="button" data-lang="download-btn" aria-label="Tải xuống PDF">
-                        ⬇️ Tải xuống
-                    </button>
+            <div class="catalog-list">
+                <div class="catalog-display catalog-card" data-file="MAIDAILUU_CATALOGUE_deepforest.pdf" data-title="DEEP THE FOREST | 2022">
+                    <div class="pdf-icon">🌲</div>
+                    <div class="catalog-name">DEEP THE FOREST</div>
+                    <div class="catalog-size">Solo Exhibition Catalogue · Vietnam Art Museum</div>
+                    <div class="actions">
+                        <button class="btn btn-view" type="button" data-action="view" aria-label="View Deep The Forest">
+                            👁️ View
+                        </button>
+                        <button class="btn btn-download" type="button" data-action="download" aria-label="Download Deep The Forest">
+                            ⬇️ Download
+                        </button>
+                    </div>
+                </div>
+
+                <div class="catalog-display catalog-card" data-file="MAIDAILUU_CATALOGUE_fantasygarden.pdf" data-title="FANTASY GARDEN | 2024">
+                    <div class="pdf-icon">🌸</div>
+                    <div class="catalog-name">FANTASY GARDEN</div>
+                    <div class="catalog-size">Solo Exhibition Catalogue · Vietnam Art Museum</div>
+                    <div class="actions">
+                        <button class="btn btn-view" type="button" data-action="view" aria-label="View Fantasy Garden">
+                            👁️ View
+                        </button>
+                        <button class="btn btn-download" type="button" data-action="download" aria-label="Download Fantasy Garden">
+                            ⬇️ Download
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -572,12 +594,28 @@
                     <div class="info-card-value">Maidailuu</div>
                 </div>
                 <div class="info-card">
-                    <div class="info-card-label" data-lang="format-label">Định Dạng</div>
-                    <div class="info-card-value">PDF</div>
+                    <div class="info-card-label" data-lang="email-label">Email</div>
+                    <div class="info-card-value">maidai.fpt@gmail.com</div>
                 </div>
                 <div class="info-card">
-                    <div class="info-card-label" data-lang="status-label">Trạng Thái</div>
-                    <div class="info-card-value" data-lang="status-value">Có Sẵn</div>
+                    <div class="info-card-label" data-lang="website-label">Website</div>
+                    <div class="info-card-value">maidailuu.com</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label" data-lang="education-label">Education</div>
+                    <div class="info-card-value">
+                        2007–2011: Vietnam Fine Art University
+                        <br>2015: Master’s degree in Fine Art
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-label" data-lang="exhibitions-label">Solo Exhibitions</div>
+                    <div class="info-card-value">
+                        2024: FANTASY GARDEN, Vietnam Art Museum
+                        <br>2022: DEEP THE FOREST, Vietnam Art Museum
+                        <br>2020: I AM MAI DAI LUU, Vietnam Art Museum
+                        <br>2017: FLAY IN THE SKY, V - Art
+                    </div>
                 </div>
             </div>
         </div>
@@ -591,7 +629,7 @@
     <div id="pdfModal" class="modal" role="dialog" data-lang="modal-title" aria-labelledby="modalTitle" aria-hidden="true">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitle" data-lang="modal-header">📄 Trình Xem Danh Mục Maidailuu</h2>
+                <h2 id="modalTitle"><span id="modalFileTitle"></span><span id="modalHeaderLabel" data-lang="modal-header">📄 Trình Xem Danh Mục Maidailuu</span></h2>
                 <button class="modal-close" id="closeBtn" type="button" data-lang="close-btn" aria-label="Đóng trình xem PDF">&times;</button>
             </div>
             <div class="modal-body">
@@ -619,11 +657,15 @@
             const translations = {
                 vi: {
                     'subtitle': 'Cổng Xem Danh Mục Nghệ Sĩ',
-                    'description': 'Khám phá bộ sưu tập đầy đủ và danh mục của những tác phẩm nghệ thuật của Maidailuu. Xem toàn bộ danh mục hoặc tải xuống để xem ngoại tuyến.',
+                    'description': 'Khám phá hai catalogue triển lãm của Mai Dai Luu: DEEP THE FOREST (2022) và FANTASY GARDEN (2024). Chọn một catalogue bên dưới để xem trước hoặc tải xuống trực tiếp.',
                     'file-size': 'Sẵn sàng để xem',
                     'view-btn': '👁️ Xem',
                     'download-btn': '⬇️ Tải xuống',
                     'artist-label': 'Nghệ Sĩ',
+                    'email-label': 'Email',
+                    'website-label': 'Website',
+                    'education-label': 'Học vấn',
+                    'exhibitions-label': 'Triển lãm cá nhân',
                     'format-label': 'Định Dạng',
                     'status-label': 'Trạng Thái',
                     'status-value': 'Có Sẵn',
@@ -638,11 +680,15 @@
                 },
                 en: {
                     'subtitle': 'Artist Catalog Portal',
-                    'description': 'Explore the complete collection and portfolio of artworks by Maidailuu. View the full catalog or download it for offline access.',
+                    'description': 'Explore two exhibition catalogues by Mai Dai Luu: DEEP THE FOREST (2022) and FANTASY GARDEN (2024). Choose a catalogue below to preview or download directly.',
                     'file-size': 'Ready to view',
                     'view-btn': '👁️ View',
                     'download-btn': '⬇️ Download',
                     'artist-label': 'Artist',
+                    'email-label': 'Email',
+                    'website-label': 'Website',
+                    'education-label': 'Education',
+                    'exhibitions-label': 'Solo Exhibitions',
                     'format-label': 'Format',
                     'status-label': 'Status',
                     'status-value': 'Available',
@@ -657,14 +703,17 @@
                 }
             };
 
-            const PDF_URL = 'MAIDAILUU_CATALOGUE_FINAL.pdf';
             const modal = document.getElementById('pdfModal');
             const pdfFrame = document.getElementById('pdfFrame');
-            const viewBtn = document.getElementById('viewBtn');
-            const downloadBtn = document.getElementById('downloadBtn');
+            const modalFileTitle = document.getElementById('modalFileTitle');
+            const modalHeaderLabel = document.getElementById('modalHeaderLabel');
+            const pdfFallback = document.getElementById('pdfFallback');
+            const fallbackDownloadBtn = document.getElementById('fallbackDownloadBtn');
+            const viewButtons = document.querySelectorAll('.catalog-card .btn-view');
+            const downloadButtons = document.querySelectorAll('.catalog-card .btn-download');
             const closeBtn = document.getElementById('closeBtn');
-            const fileSizeEl = document.getElementById('file-size');
             const languageToggle = document.getElementById('languageToggle');
+            let currentPdfFile = '';
 
             // Get saved language or default to Vietnamese
             let currentLanguage = localStorage.getItem('language') || 'vi';
@@ -691,9 +740,6 @@
                     }
                 });
 
-                // Update aria-labels
-                viewBtn.setAttribute('aria-label', trans['viewBtn-label']);
-                downloadBtn.setAttribute('aria-label', trans['downloadBtn-label']);
                 closeBtn.setAttribute('aria-label', trans['closeBtn-label']);
                 languageToggle.setAttribute('aria-label', trans['langToggle-label']);
 
@@ -704,185 +750,129 @@
                 document.documentElement.lang = lang;
             }
 
-            // Get file size
-            function getFileSize() {
-                // Use XMLHttpRequest for better compatibility with older devices
-                const xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200 || xhr.status === 206) {
-                            const size = xhr.getResponseHeader('content-length');
-                            if (size) {
-                                const mb = (parseInt(size) / (1024 * 1024)).toFixed(1);
-                                if (mb > 0.1) {
-                                    const trans = translations[currentLanguage];
-                                    fileSizeEl.textContent = trans['file-size-text'] + ' ' + mb + ' MB';
-                                }
-                            }
-                        }
-                    }
-                };
-                xhr.onerror = function() {
-                    fileSizeEl.textContent = translations[currentLanguage]['file-size'];
-                };
-                xhr.open('HEAD', PDF_URL, true);
-                xhr.send();
-            }
-
-            // Open PDF viewer
-            function openViewer() {
-                try {
-                    const pdfUrl = PDF_URL + '#toolbar=1&navpanes=0&scrollbar=1';
-                    pdfFrame.src = pdfUrl;
-                    
-                    // Check if browser supports PDF viewing in iframe
-                    pdfFrame.onload = function() {
-                        // PDF loaded successfully
-                        document.getElementById('pdfFallback').style.display = 'none';
-                        pdfFrame.style.display = 'block';
-                    };
-                    
-                    pdfFrame.onerror = function() {
-                        // PDF failed to load, show fallback
-                        showPdfFallback();
-                    };
-                    
-                    // Timeout for browsers that don't support PDF (e.g., Edge with strict policies)
-                    setTimeout(function() {
-                        try {
-                            if (!pdfFrame.contentDocument && !pdfFrame.contentWindow) {
-                                showPdfFallback();
-                            }
-                        } catch (e) {
-                            showPdfFallback();
-                        }
-                    }, 2000);
-                    
-                    modal.classList.add('show');
-                    modal.setAttribute('aria-hidden', 'false');
-                    closeBtn.focus();
-                    
-                    // Prevent body scroll on mobile
-                    document.body.style.overflow = 'hidden';
-                } catch (e) {
-                    console.error('Error opening PDF viewer:', e);
-                    showPdfFallback();
+            function openViewer(file, title) {
+                if (!file) {
+                    return;
                 }
+
+                currentPdfFile = file;
+                modalFileTitle.textContent = title ? `${title} — ` : '';
+                pdfFrame.src = file;
+                pdfFrame.style.display = 'block';
+                pdfFallback.style.display = 'none';
+                modal.classList.add('show');
+                modal.setAttribute('aria-hidden', 'false');
+                closeBtn.focus();
+                document.body.style.overflow = 'hidden';
+
+                pdfFrame.onload = function() {
+                    pdfFallback.style.display = 'none';
+                    pdfFrame.style.display = 'block';
+                };
+
+                pdfFrame.onerror = showPdfFallback;
             }
 
             function showPdfFallback() {
                 pdfFrame.style.display = 'none';
-                document.getElementById('pdfFallback').style.display = 'block';
-                
-                // Attach download functionality to fallback button
-                const fallbackBtn = document.getElementById('fallbackDownloadBtn');
-                fallbackBtn.onclick = downloadCatalog;
+                pdfFallback.style.display = 'block';
+                fallbackDownloadBtn.onclick = function() {
+                    downloadCatalog(currentPdfFile);
+                };
             }
 
-            // Close PDF viewer
             function closeViewer() {
                 modal.classList.remove('show');
                 modal.setAttribute('aria-hidden', 'true');
                 pdfFrame.src = '';
                 pdfFrame.style.display = 'block';
-                document.getElementById('pdfFallback').style.display = 'none';
-                
-                // Restore body scroll
+                pdfFallback.style.display = 'none';
                 document.body.style.overflow = '';
-                
-                // Return focus to view button
-                viewBtn.focus();
             }
 
-            // Download catalog
-            function downloadCatalog() {
+            function downloadCatalog(file) {
+                const pdfFile = file || currentPdfFile;
+                if (!pdfFile) {
+                    return;
+                }
+
                 try {
-                    // Detect browser and device
-                    const isIOS = navigator.userAgent.match(/iPad|iPhone|iPod/);
-                    const isAndroid = navigator.userAgent.match(/Android/);
-                    const isEdge = navigator.userAgent.match(/Edg/);
-                    
-                    // For iOS and Edge, open in new tab
+                    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                    const isAndroid = /Android/.test(navigator.userAgent);
+                    const isEdge = /Edg/.test(navigator.userAgent);
+                    const fileName = pdfFile.split('/').pop();
+
                     if (isIOS || isEdge) {
-                        window.open(PDF_URL, '_blank');
+                        window.open(pdfFile, '_blank');
                         return;
                     }
-                    
-                    // For Android and other browsers, try native download
+
                     if (isAndroid) {
-                        // Create a form and submit to trigger download
                         const form = document.createElement('form');
                         form.method = 'GET';
-                        form.action = PDF_URL;
+                        form.action = pdfFile;
                         form.target = '_blank';
                         document.body.appendChild(form);
                         form.submit();
                         document.body.removeChild(form);
                         return;
                     }
-                    
-                    // For desktop browsers, use HTML5 download attribute
+
                     const link = document.createElement('a');
-                    link.href = PDF_URL;
-                    link.download = 'MAIDAILUU_CATALOGUE_FINAL.pdf';
+                    link.href = pdfFile;
+                    link.download = fileName;
                     link.style.display = 'none';
-                    
                     document.body.appendChild(link);
                     link.click();
                     document.body.removeChild(link);
-                    
                 } catch (e) {
                     console.error('Error downloading PDF:', e);
-                    // Final fallback: open in new window
-                    window.open(PDF_URL, '_blank');
+                    window.open(pdfFile, '_blank');
                 }
             }
 
-            // Event listeners
-            viewBtn.addEventListener('click', openViewer);
-            downloadBtn.addEventListener('click', downloadCatalog);
+            function bindCatalogButtons() {
+                viewButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const card = this.closest('.catalog-card');
+                        openViewer(card.dataset.file, card.dataset.title || card.querySelector('.catalog-name').textContent);
+                    });
+                });
+
+                downloadButtons.forEach(function(button) {
+                    button.addEventListener('click', function() {
+                        const card = this.closest('.catalog-card');
+                        downloadCatalog(card.dataset.file);
+                    });
+                });
+            }
+
+            bindCatalogButtons();
             closeBtn.addEventListener('click', closeViewer);
 
-            // Close modal when clicking outside
             modal.addEventListener('click', function(event) {
                 if (event.target === modal) {
                     closeViewer();
                 }
             });
 
-            // Close on escape key
             document.addEventListener('keydown', function(event) {
                 if (event.key === 'Escape' || event.keyCode === 27) {
                     closeViewer();
                 }
             });
 
-            // Prevent modal from closing when clicking on iframe
             pdfFrame.addEventListener('click', function(event) {
                 event.stopPropagation();
             });
 
-            // Handle orientation change
             window.addEventListener('orientationchange', function() {
-                // Adjust modal on orientation change
                 if (modal.classList.contains('show')) {
                     setTimeout(function() {
                         window.scrollTo(0, 0);
                     }, 100);
                 }
             });
-
-            // Initialize on page load
-            document.addEventListener('DOMContentLoaded', getFileSize);
-
-            // Fallback for older browsers
-            if (!window.addEventListener) {
-                document.attachEvent('onreadystatechange', function() {
-                    if (document.readyState === 'complete') {
-                        getFileSize();
-                    }
-                });
-            }
         })();
     </script>
 </body>

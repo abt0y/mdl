@@ -10,18 +10,27 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.static(__dirname));
 
+const catalogFiles = [
+  'MAIDAILUU_CATALOGUE_deepforest.pdf',
+  'MAIDAILUU_CATALOGUE_fantasygarden.pdf'
+];
+
 app.get('/api/catalog-info', (req, res) => {
   res.json({
     name: 'Maidailuu Catalog',
     artist: 'Maidailuu',
-    filename: 'MAIDAILUU_CATALOGUE_FINAL.pdf',
-    description: 'Complete catalog of artworks and collections'
+    catalogs: catalogFiles,
+    description: 'Two exhibition catalogues from Mai Dai Luu: DEEP THE FOREST and FANTASY GARDEN.'
   });
 });
 
-app.get('/download', (req, res) => {
-  const filePath = path.join(__dirname, 'MAIDAILUU_CATALOGUE_FINAL.pdf');
-  res.download(filePath, 'MAIDAILUU_CATALOGUE_FINAL.pdf');
+app.get('/download/:filename', (req, res) => {
+  const fileName = req.params.filename;
+  if (!catalogFiles.includes(fileName)) {
+    return res.status(404).send('Catalog not found');
+  }
+  const filePath = path.join(__dirname, fileName);
+  res.download(filePath, fileName);
 });
 
 app.listen(PORT, () => {
