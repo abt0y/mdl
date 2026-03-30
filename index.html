@@ -94,6 +94,60 @@
             margin-bottom: clamp(20px, 5vw, 40px);
         }
 
+        .artist-section {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 24px;
+            margin-bottom: clamp(30px, 6vw, 40px);
+        }
+
+        .artist-profile {
+            background: linear-gradient(180deg, #fffaf0 0%, #f7f1e8 100%);
+            border: 1px solid rgba(255, 198, 110, 0.45);
+            border-radius: 18px;
+            padding: clamp(22px, 4vw, 30px);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 100%;
+            box-shadow: 0 14px 40px rgba(102, 126, 234, 0.09);
+        }
+
+        .artist-profile h3 {
+            font-size: clamp(1.35rem, 4vw, 1.9rem);
+            margin-bottom: 12px;
+            color: #2c2c2c;
+        }
+
+        .artist-profile p {
+            color: #4b4b4b;
+            line-height: 1.75;
+            margin-bottom: 18px;
+            font-size: clamp(0.98rem, 2.8vw, 1.05rem);
+        }
+
+        .artist-contact {
+            display: grid;
+            gap: 10px;
+        }
+
+        .artist-contact div {
+            color: #333;
+            font-size: clamp(0.95rem, 2.8vw, 1rem);
+        }
+
+        .artist-contact strong {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: clamp(15px, 4vw, 20px);
+            margin-top: clamp(10px, 3vw, 20px);
+        }
+
         .catalog-display {
             background: #f8f9fa;
             border-radius: 12px;
@@ -441,6 +495,10 @@
             .info-grid {
                 grid-template-columns: 1fr;
             }
+
+            .artist-section {
+                grid-template-columns: 1fr;
+            }
         }
 
         /* Responsive for tablets */
@@ -588,33 +646,48 @@
                 </div>
             </div>
 
-            <div class="info-grid">
-                <div class="info-card">
-                    <div class="info-card-label" data-lang="artist-label">Nghệ Sĩ</div>
-                    <div class="info-card-value">Maidailuu</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-card-label" data-lang="email-label">Email</div>
-                    <div class="info-card-value">maidai.fpt@gmail.com</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-card-label" data-lang="website-label">Website</div>
-                    <div class="info-card-value">maidailuu.com</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-card-label" data-lang="education-label">Education</div>
-                    <div class="info-card-value">
-                        2007–2011: Vietnam Fine Art University
-                        <br>2015: Master’s degree in Fine Art
+            <div class="artist-section">
+                <section class="artist-profile">
+                    <h3>Mai Dai Luu</h3>
+                    <p>
+                        Mai Dai Luu is a Vietnamese fine art artist with a Master’s degree in Fine Art.
+                        Her work is presented through immersive solo exhibitions at major cultural venues,
+                        including the Vietnam Art Museum.
+                    </p>
+                    <div class="artist-contact">
+                        <div><strong>Email:</strong> maidai.fpt@gmail.com</div>
+                        <div><strong>Website:</strong> maidailuu.com</div>
                     </div>
-                </div>
-                <div class="info-card">
-                    <div class="info-card-label" data-lang="exhibitions-label">Solo Exhibitions</div>
-                    <div class="info-card-value">
-                        2024: FANTASY GARDEN, Vietnam Art Museum
-                        <br>2022: DEEP THE FOREST, Vietnam Art Museum
-                        <br>2020: I AM MAI DAI LUU, Vietnam Art Museum
-                        <br>2017: FLAY IN THE SKY, V - Art
+                </section>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-label" data-lang="artist-label">Nghệ Sĩ</div>
+                        <div class="info-card-value">Maidailuu</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label" data-lang="email-label">Email</div>
+                        <div class="info-card-value">maidai.fpt@gmail.com</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label" data-lang="website-label">Website</div>
+                        <div class="info-card-value">maidailuu.com</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label" data-lang="education-label">Education</div>
+                        <div class="info-card-value">
+                            2007–2011: Vietnam Fine Art University
+                            <br>2015: Master’s degree in Fine Art
+                        </div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-label" data-lang="exhibitions-label">Solo Exhibitions</div>
+                        <div class="info-card-value">
+                            2024: FANTASY GARDEN, Vietnam Art Museum
+                            <br>2022: DEEP THE FOREST, Vietnam Art Museum
+                            <br>2020: I AM MAI DAI LUU, Vietnam Art Museum
+                            <br>2017: FLAY IN THE SKY, V - Art
+                        </div>
                     </div>
                 </div>
             </div>
