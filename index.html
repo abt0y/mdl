@@ -369,32 +369,20 @@
             display: block;
         }
 
-        .pdf-fallback {
-            text-align: center;
-            padding: 20px;
+        #pdfFallback {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             color: #666;
         }
 
-        .pdf-fallback p {
+        #pdfFallback p {
             margin-bottom: 20px;
-            font-size: clamp(0.9rem, 3vw, 1rem);
-        }
-
-        .pdf-fallback-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            min-height: 48px;
-            min-width: 48px;
-            -webkit-appearance: none;
-            appearance: none;
-            touch-action: manipulation;
+            font-size: 1.1em;
+            max-width: 500px;
         }
 
         /* Responsive for small phones */
@@ -607,7 +595,15 @@
                 <button class="modal-close" id="closeBtn" type="button" data-lang="close-btn" aria-label="Đóng trình xem PDF">&times;</button>
             </div>
             <div class="modal-body">
-                <iframe id="pdfFrame" title="PDF Viewer" role="document" src="" sandbox="allow-same-origin allow-scripts"></iframe>
+                <iframe id="pdfFrame" title="PDF Viewer" role="document" src=""></iframe>
+                <div id="pdfFallback" style="display: none; text-align: center; padding: 40px; color: #666;">
+                    <p style="margin-bottom: 20px; font-size: 1.1em;">
+                        Your browser is unable to display the PDF inline. Please use the download option instead.
+                    </p>
+                    <button id="fallbackDownloadBtn" class="btn btn-download" style="width: auto;">
+                        ⬇️ Download PDF
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -736,7 +732,32 @@
             // Open PDF viewer
             function openViewer() {
                 try {
-                    pdfFrame.src = PDF_URL + '#toolbar=1&navpanes=0&scrollbar=1';
+                    const pdfUrl = PDF_URL + '#toolbar=1&navpanes=0&scrollbar=1';
+                    pdfFrame.src = pdfUrl;
+                    
+                    // Check if browser supports PDF viewing in iframe
+                    pdfFrame.onload = function() {
+                        // PDF loaded successfully
+                        document.getElementById('pdfFallback').style.display = 'none';
+                        pdfFrame.style.display = 'block';
+                    };
+                    
+                    pdfFrame.onerror = function() {
+                        // PDF failed to load, show fallback
+                        showPdfFallback();
+                    };
+                    
+                    // Timeout for browsers that don't support PDF (e.g., Edge with strict policies)
+                    setTimeout(function() {
+                        try {
+                            if (!pdfFrame.contentDocument && !pdfFrame.contentWindow) {
+                                showPdfFallback();
+                            }
+                        } catch (e) {
+                            showPdfFallback();
+                        }
+                    }, 2000);
+                    
                     modal.classList.add('show');
                     modal.setAttribute('aria-hidden', 'false');
                     closeBtn.focus();
@@ -745,11 +766,17 @@
                     document.body.style.overflow = 'hidden';
                 } catch (e) {
                     console.error('Error opening PDF viewer:', e);
-                    const msg = currentLanguage === 'vi' ? 
-                        'Không thể mở trình xem PDF. Vui lòng tải xuống tệp thay thế.' : 
-                        'Unable to open PDF viewer. Please download the file instead.';
-                    alert(msg);
+                    showPdfFallback();
                 }
+            }
+
+            function showPdfFallback() {
+                pdfFrame.style.display = 'none';
+                document.getElementById('pdfFallback').style.display = 'block';
+                
+                // Attach download functionality to fallback button
+                const fallbackBtn = document.getElementById('fallbackDownloadBtn');
+                fallbackBtn.onclick = downloadCatalog;
             }
 
             // Close PDF viewer
@@ -757,6 +784,8 @@
                 modal.classList.remove('show');
                 modal.setAttribute('aria-hidden', 'true');
                 pdfFrame.src = '';
+                pdfFrame.style.display = 'block';
+                document.getElementById('pdfFallback').style.display = 'none';
                 
                 // Restore body scroll
                 document.body.style.overflow = '';
@@ -768,23 +797,43 @@
             // Download catalog
             function downloadCatalog() {
                 try {
-                    // Try HTML5 download attribute first
+                    // Detect browser and device
+                    const isIOS = navigator.userAgent.match(/iPad|iPhone|iPod/);
+                    const isAndroid = navigator.userAgent.match(/Android/);
+                    const isEdge = navigator.userAgent.match(/Edg/);
+                    
+                    // For iOS and Edge, open in new tab
+                    if (isIOS || isEdge) {
+                        window.open(PDF_URL, '_blank');
+                        return;
+                    }
+                    
+                    // For Android and other browsers, try native download
+                    if (isAndroid) {
+                        // Create a form and submit to trigger download
+                        const form = document.createElement('form');
+                        form.method = 'GET';
+                        form.action = PDF_URL;
+                        form.target = '_blank';
+                        document.body.appendChild(form);
+                        form.submit();
+                        document.body.removeChild(form);
+                        return;
+                    }
+                    
+                    // For desktop browsers, use HTML5 download attribute
                     const link = document.createElement('a');
                     link.href = PDF_URL;
                     link.download = 'MAIDAILUU_CATALOGUE_FINAL.pdf';
+                    link.style.display = 'none';
                     
-                    // For better mobile support
-                    if (navigator.userAgent.match(/iPad|iPhone|iPod/)) {
-                        // Open in new window for iOS
-                        window.open(PDF_URL, '_blank');
-                    } else {
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                    }
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
                 } catch (e) {
                     console.error('Error downloading PDF:', e);
-                    // Fallback: open in new window
+                    // Final fallback: open in new window
                     window.open(PDF_URL, '_blank');
                 }
             }
